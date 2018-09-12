@@ -30,6 +30,7 @@
                 @blur="handleBlur"
                 @input="handleInput"
                 @change="handleChange">
+            <i class="ivu-icon ivu-icon-plus-circled" v-if="multiInput" :style="tmpInputStyle" @click="handleTmp"></i>
             <div :class="[prefixCls + '-group-append']" v-if="append" v-show="slotReady"><slot name="append"></slot></div>
         </template>
         <textarea
@@ -142,6 +143,10 @@
                     return oneOf(value, ['hard', 'soft']);
                 },
                 default: 'soft'
+            },
+            multiInput: {
+                type: Boolean,
+                default: false
             }
         },
         data () {
@@ -185,9 +190,26 @@
                         [`${prefixCls}-disabled`]: this.disabled
                     }
                 ];
+            },
+            tmpInputStyle () {
+                let style = {
+                    position: `absolute`,
+                    right: `10px`,
+                    top: `10px`,
+                    cursor: `pointer`
+                };
+                return style;
             }
         },
         methods: {
+            handleTmp (event) {
+                if (this.currentValue) {
+                    setTimeout(() => {
+                        this.setCurrentValue()
+                    }, 0)
+                    this.$emit('on-tmp', this.currentValue);
+                }
+            },
             handleEnter (event) {
                 this.$emit('on-enter', event);
             },
